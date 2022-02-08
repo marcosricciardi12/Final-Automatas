@@ -1,6 +1,7 @@
 from datetime import datetime
 import re
-
+from tabulate import tabulate
+import pandas as pd
 
 class UserNotExist(Exception):
     pass
@@ -94,20 +95,29 @@ class Registro:
         print("La fecha ingresada es: " + str(self.date_end))
 
     def show_activity(self):
+        DATEMAC = []
         MAC_AP = []
+        INDEX_USER = []
         for i in range(1, self.cantreg):
-            if(self.user == self.registro[i][1] and self.date_start <= datetime.strptime(self.registro[i][2][0:10], '%d/%m/%Y') and self.date_end >= datetime.strptime(self.registro[i][2][0:10], '%d/%m/%Y')):
-                if self.registro[i][7] not in MAC_AP:
-                    MAC_AP.append(self.registro[i][7])
-                    print(self.registro[i])
+            if(self.user == self.registro[i][1] and self.date_start <= datetime.strptime(self.registro[i][2][0:10], '%d/%m/%Y') 
+            and self.date_end >= datetime.strptime(self.registro[i][2][0:10], '%d/%m/%Y')):
+                INDEX_USER.append(i)
+                if len(INDEX_USER) >= 2:
+                    if self.registro[INDEX_USER[-2]][7] != self.registro[i][7]:
+                        MAC_AP.append(self.registro[i][7])
+                        DATEMAC.append(self.registro[i][2])
+        myData={"User":self.user, "Date": DATEMAC, "Mac AP": MAC_AP}
+        myDataFrame=pd.DataFrame(myData)
+        print(tabulate(myDataFrame, headers='keys', tablefmt='psql', stralign='center'))
 
     def export_activity(self):
         with open('activity_export.csv', 'w') as f:
-            MAC_AP = []
+            INDEX_USER = []
             f.write("User; Date; MAC AP\n")
             f.write(self.user + ";" + "Intervalo: " + str(self.date_start) + " - " + str(self.date_end) + "; \n")
             for i in range(1, self.cantreg):
                 if(self.user == self.registro[i][1] and self.date_start <= datetime.strptime(self.registro[i][2][0:10], '%d/%m/%Y') and self.date_end >= datetime.strptime(self.registro[i][2][0:10], '%d/%m/%Y')):
-                    if self.registro[i][7] not in MAC_AP:
-                        MAC_AP.append(self.registro[i][7])
-                        f.write("\t;" + self.registro[i][2] + ";" + self.registro[i][7] + '\n')            
+                    INDEX_USER.append(i)
+                    if len(INDEX_USER) >= 2:
+                        if self.registro[INDEX_USER[-2]][7] != self.registro[i][7]:
+                            f.write("\t;" + self.registro[i][2] + ";" + self.registro[i][7] + '\n')
