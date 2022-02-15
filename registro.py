@@ -2,6 +2,10 @@ from datetime import datetime
 import re
 from tabulate import tabulate
 import pandas as pd
+from colorama import Fore, init
+from clearscreen import clearscreen
+init(autoreset=True) 
+# print(Fore.MAGENTA + "\t" + self.registro[i][1]) 
 
 class UserNotExist(Exception):
     pass
@@ -24,6 +28,7 @@ class Registro:
         self.user = ""
         self.registro_vacio()
         self.registro_lleno()
+        self.print_info()
 
     def registro_vacio(self):    
 
@@ -68,7 +73,7 @@ class Registro:
 
     def date_validate(self, date):
         try:
-            re_fecha = re.compile(r'^(0?[1-9]|[12][0-9]|3[01])/(0?[1-9]|1[012])/((19|20)\d\d)$')
+            re_fecha = re.compile(r'^(0?[1-9]|[12][0-9]|30)/(0?[469]|11)/((19|20)\d\d)$|^(0?[1-9]|[12][0-9]|31)/(0?[13578]|1[02])/((19|20)\d\d)$|^(0?[1-9]|[12][0-8])/(0?2)/((19|20)\d\d)$')
             if re_fecha.search(date) is None:
                 raise InvalidDate('Formato de Fecha inválido')
             else:
@@ -121,3 +126,12 @@ class Registro:
                     if len(INDEX_USER) >= 2:
                         if self.registro[INDEX_USER[-2]][7] != self.registro[i][7]:
                             f.write("\t;" + self.registro[i][2] + ";" + self.registro[i][7] + '\n')
+
+    def print_info(self):
+        print("\tFinal Autómatas y Gramáticas")
+        print("\nIntegrantes: \t-Ricciardi, Marcos \n\t\t-Taccetta, Nicolas \n\t\t-Tkaczek, Tobías")
+        print("\nConsigna: \tSeguimiento algún usuario, en un día establecido, para ver el desplazamiento")
+        print("\t\tdel usuario en el edificio donde se encuentra la red, a través de la MAC AP")
+        print("\t\tDebe incluir una lista de usuarios y la posibilidad de ingresar un rango de fechas.")
+        input("\n\n\t\tPresione enter para continuar")
+        clearscreen()
