@@ -1,6 +1,5 @@
 from datetime import datetime
 import re
-from turtle import clear
 from tabulate import tabulate
 import pandas as pd
 from colorama import Fore, init, Back
