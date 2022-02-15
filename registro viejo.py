@@ -1,11 +1,11 @@
 from datetime import datetime
 import re
-from turtle import clear
 from tabulate import tabulate
 import pandas as pd
-from colorama import Fore, init, Back
+from colorama import Fore, init
 from clearscreen import clearscreen
 init(autoreset=True) 
+# print(Fore.MAGENTA + "\t" + self.registro[i][1]) 
 
 class UserNotExist(Exception):
     pass
@@ -56,16 +56,15 @@ class Registro:
         for i in range(1, self.cantreg):
             if self.registro[i][1] not in self.users:
                 self.users.append(self.registro[i][1])
-                print(Fore.CYAN + "\t" + self.registro[i][1])     
+                print("\t" + self.registro[i][1])     
 
     def select_user(self):
         try:
-            self.user = input(Fore.YELLOW + "\nIngrese el nombre del usuario que desea ver el desplazamiento: " + Fore.GREEN)
+            self.user = input("\nIngrese el nombre del usuario que desea ver el desplazamiento: ")
             if self.user not in self.users:
-                raise UserNotExist(Fore.RED + 'El usuario ingresado no existe, intente nuevamente')
+                raise UserNotExist('El usuario ingresado no existe, intente nuevamente')
             else:
-                clearscreen()
-                print(Fore.YELLOW +"\n El usuario ingresado es: " + Fore.GREEN + self.user)
+                print("\n El usuario ingresado es: " + self.user)
                 self.valid_user = False
 
         except UserNotExist as e:
@@ -76,7 +75,7 @@ class Registro:
         try:
             re_fecha = re.compile(r'^(0?[1-9]|[12][0-9]|30)/(0?[469]|11)/((19|20)\d\d)$|^(0?[1-9]|[12][0-9]|31)/(0?[13578]|1[02])/((19|20)\d\d)$|^(0?[1-9]|[12][0-8])/(0?2)/((19|20)\d\d)$')
             if re_fecha.search(date) is None:
-                raise InvalidDate(Fore.RED + 'Formato de Fecha inválido' + Fore.GREEN)
+                raise InvalidDate('Formato de Fecha inválido')
             else:
                 self.invalid_date = False
 
@@ -87,24 +86,20 @@ class Registro:
     def input_date_start(self):
         self.invalid_date = True
         while self.invalid_date:
-            self.date_start = input(Fore.YELLOW + "\nIngrese fecha inicial (formato dd/mm/aaaa): " + Fore.GREEN)
+            self.date_start = input("\nIngrese fecha inicial (formato dd/mm/aaaa): ")
             self.date_validate(self.date_start)
         self.date_start = datetime.strptime(self.date_start, '%d/%m/%Y')
-        print(Fore.GREEN + "La fecha ingresada es: " + str(self.date_start))
+        print("La fecha ingresada es: " + str(self.date_start))
 
     def input_date_end(self):
         self.invalid_date = True
         while self.invalid_date:
-            self.date_end= input(Fore.YELLOW +"\nIngrese fecha final (formato dd/mm/aaaa): " + Fore.GREEN)
+            self.date_end= input("\nIngrese fecha final (formato dd/mm/aaaa): ")
             self.date_validate(self.date_end)
         self.date_end = datetime.strptime(self.date_end, '%d/%m/%Y')
-        print(Fore.GREEN +"La fecha ingresada es: " + str(self.date_end))
+        print("La fecha ingresada es: " + str(self.date_end))
 
     def show_activity(self):
-        clearscreen()
-        print(Fore.YELLOW +"El usuario es: " + Fore.GREEN + self.user)
-        print(Fore.GREEN + "La fecha de inicio de búsqueda es: " + str(self.date_start))
-        print(Fore.GREEN +"La fecha de fin de búsqueda es: " + str(self.date_end))
         DATEMAC = []
         MAC_AP = []
         INDEX_USER = []
@@ -116,9 +111,8 @@ class Registro:
                     if self.registro[INDEX_USER[-2]][7] != self.registro[i][7]:
                         MAC_AP.append(self.registro[i][7])
                         DATEMAC.append(self.registro[i][2])
-        myData={"User":self.user, "Date": DATEMAC, "MAC AP": MAC_AP}
+        myData={"User":self.user, "Date": DATEMAC, "Mac AP": MAC_AP}
         myDataFrame=pd.DataFrame(myData)
-        input(Fore.YELLOW + "\n\n\t\tPresione enter para continuar" + Fore.CYAN)
         print(tabulate(myDataFrame, headers='keys', tablefmt='psql', stralign='center'))
 
     def export_activity(self):
@@ -134,10 +128,10 @@ class Registro:
                             f.write("\t;" + self.registro[i][2] + ";" + self.registro[i][7] + '\n')
 
     def print_info(self):
-        print(Fore.GREEN + "\tFINAL AUTOMATAS Y GRAMATICAS")
-        print(Fore.BLUE + "\nIntegrantes:" + Fore.CYAN + "\t-Ricciardi, Marcos \n\t\t-Taccetta, Nicolas \n\t\t-Tkaczek, Tobías")
-        print(Fore.BLUE + "\nConsigna:\t" + Fore.CYAN + "Seguimiento algún usuario, en un día establecido, para ver el desplazamiento")
-        print(Fore.CYAN + "\t\tdel usuario en el edificio donde se encuentra la red, a través de la MAC AP")
-        print(Fore.CYAN + "\t\tDebe incluir una lista de usuarios y la posibilidad de ingresar un rango de fechas.")
-        input(Fore.YELLOW + "\n\n\t\tPresione enter para continuar" + Fore.BLUE)
+        print("\tFinal Autómatas y Gramáticas")
+        print("\nIntegrantes: \t-Ricciardi, Marcos \n\t\t-Taccetta, Nicolas \n\t\t-Tkaczek, Tobías")
+        print("\nConsigna: \tSeguimiento algún usuario, en un día establecido, para ver el desplazamiento")
+        print("\t\tdel usuario en el edificio donde se encuentra la red, a través de la MAC AP")
+        print("\t\tDebe incluir una lista de usuarios y la posibilidad de ingresar un rango de fechas.")
+        input("\n\n\t\tPresione enter para continuar")
         clearscreen()
